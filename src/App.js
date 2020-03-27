@@ -1,26 +1,56 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React  from 'react'
+import UserList from "./Components/UserList"
+import './App.css'
+import axios from 'axios';
+import UserProfil from './Components/UserProfil';
+import {BrowserRouter,Route} from 'react-router-dom'
+import UserCom from './Components/UserCom';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+ class App extends React.Component {
+   state={
+      userList:[]
+
+   }
+
+   componentDidMount(){
+     this.getUsers();
+   }
+
+   getUsers=()=> axios.get('https://jsonplaceholder.typicode.com/users')
+   .then(Users=>this.setState({
+     userList:Users.data
+   })
+   ).catch(err=> console.log(err))
+
+  
+
+
+  render() {
+    console.log(this.state.userList)
+    return (
+      <BrowserRouter>
+      <div>
+        
+        <Route exact path='/' render={()=><>
+        <UserList userList={this.state.userList}/>
+        </>
+        }
+        />
+        
+        <Route exact path='/profile/:id' render={(props)=><>
+        <UserProfil {...props}/>
+        </>
+        }
+        />
+
+        <Route exact path='/Comment/:id' render={(props)=>
+        <UserCom {...props}/>}/>
+
+      </div>
+      </BrowserRouter>
+    )
+  }
 }
 
-export default App;
+export default App
